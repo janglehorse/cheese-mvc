@@ -1,7 +1,22 @@
 package org.launchcode.models;
 
 /**
- * Created by adminbackup on 3/27/17.
+ * Created by LaunchCode
  */
-public class CheeseType {
+public enum CheeseType {
+
+    HARD ("Hard"),
+    SOFT ("Soft"),
+    FAKE ("Fake");
+
+    private final String name;
+
+    CheeseType(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
