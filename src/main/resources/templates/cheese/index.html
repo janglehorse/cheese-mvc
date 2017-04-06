@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
-<body>
-    <h1 th:text="${title}">Default Title</h1>
 
-    <nav th:replace="fragments :: navigation"></nav>
+<body class="container">
 
-    <p th:unless="${cheeses} and ${cheeses.size()}">no cheese :(</p>
+<h1 th:text="${title}">Default Title</h1>
 
+<nav th:replace="fragments :: navigation"></nav>
 
-<ul>
-    <!--repeat the <li></li> for each element in the list
-    insert the value of that iterator variable in the text of that <li>
-    <li th:each="entry : ${cheeses}" th:text="${entry.key}">Default Title</li>
-    <li th:each="entry : ${cheeses}" th:text="${entry.value}">Default Description</li>
-    -->
-    <li th:each="entry : ${cheeses}" th:text="${entry.key + ': ' + entry.value}"></li>
+<p th:unless="${cheeses} and ${cheeses.size()}">no cheese :(</p>
 
 
-</ul>
+<table class="table">
+
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Rating</th>
+        <th>Id</th>
+        <th>Type</th>
+    </tr>
+
+    <tr th:each="cheese : ${cheeses}">
+        <td th:text="${cheese.name}"></td>
+        <td th:text="${cheese.description}"></td>
+        <td th:text="${cheese.rating}"></td>
+        <td th:text="${cheese.Id}"></td>
+        <td th:text="${cheese.type}"></td>
+    </tr>
+
+</table>
 
 </body>
 </html>
-

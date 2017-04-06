@@ -6,61 +6,94 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.launchcode.models.CheeseType;
+import org.launchcode.models.Data.CheeseDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * Created by adminbackup on 3/7/17.
- */
 @Controller
 @RequestMapping("cheese")
 public class CheeseController {
-//Modify the static cheeses list to be a HashMap
 
-   static ArrayList<Cheese> cheeses = new ArrayList<>();
+    @Autowired
+    private CheeseDao cheeseDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
     public String index(Model model) {
 
-        model.addAttribute("cheeses", cheeses);
+        model.addAttribute("cheeses", cheeseDao.findAll());
         model.addAttribute("title", "My Cheeses");
+
         return "cheese/index";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
-        return "cheese/add";
+        model.addAttribute(new Cheese());
+        model.addAttribute("cheeseTypes", CheeseType.values());
+         return "cheese/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(@RequestParam String cheeseName,
-                                       @RequestParam String description) {
+    public String processAddCheeseForm(@ModelAttribute  @Valid Cheese cheese,
+                                       Errors errors, Model model) {
 
-            Cheese newCheese = new Cheese();
-            Cheese cheese = newCheese;
-            newCheese.setName(cheeseName);
-            newCheese.setDescription(description);
-            cheeses.add(cheese);
-            return "redirect:";
-    }
-
-    @RequestMapping(value = "delete", method = RequestMethod.GET)
-    public String displayDeleteCheeseForm(Model model) {
-
-        model.addAttribute("cheeses", cheeses);
-        model.addAttribute("title", "Delete Cheese");
-        return "cheese/delete";
-    }
-
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public String processDeleteCheeseForm(@RequestParam ArrayList<String> cheese){
-        for(String s : cheese){
-            cheeses.remove(s);
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "Add Cheese");
+            return "cheese/add";
         }
+
+        cheeseDao.save(cheese);
+        return "redirect:";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable("cheeseId") int cheeseId) {
+        Cheese cheese = cheeseDao.findOne(cheeseId);
+        model.addAttribute("title", "Edit Cheese");
+        model.addAttribute("cheese", cheese);
+        model.addAttribute("cheeseTypes", CheeseType.values());
+        model.addAttribute("rating", cheese.getRating());
+        return "cheese/edit";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.POST)
+    public String processEditForm(Model model,
+                                  @PathVariable("cheeseId") int cheeseId,
+                                  @ModelAttribute @Valid Cheese cheese,
+                                  Errors errors){
+
+        if (errors.hasErrors()) {
+
+            model.addAttribute("title", "Edit Cheese");
+            model.addAttribute("cheeseTypes", CheeseType.values());
+            model.addAttribute("rating", cheese.getRating());
+            return "cheese/add";
+        }
+        cheeseDao.delete(cheese.getId());
+        cheeseDao.save(cheese);
+        return "redirect:/cheese";
+    }
+
+
+    @RequestMapping(value = "remove", method = RequestMethod.GET)
+    public String displayRemoveCheeseForm(Model model) {
+        model.addAttribute("cheeses", cheeseDao.findAll());
+        model.addAttribute("title", "Remove Cheese");
+        return "cheese/remove";
+    }
+
+    @RequestMapping(value = "remove", method = RequestMethod.POST)
+    public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
+
+        for (int cheeseId : cheeseIds) {
+            cheeseDao.delete(cheeseId);
+        }
+
         return "redirect:";
     }
 

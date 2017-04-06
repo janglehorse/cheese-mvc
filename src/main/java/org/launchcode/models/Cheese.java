@@ -1,39 +1,80 @@
 package org.launchcode.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
- * Created by adminbackup on 3/8/17.
+ * Created by LaunchCode
  */
+@Entity
 public class Cheese {
 
-    private String name;
-    private String description;
-    private Double price;
+    @Id
+    @GeneratedValue
+    private int Id;
 
-    public String getName(){
+    @NotNull
+    @Size(min=3, max=15)
+    private String name;
+
+    @NotNull
+    @Size(min=1, message = "Description must not be empty")
+    private String description;
+
+    private CheeseType type;
+
+    @NotNull
+    @Min(1)
+    @Max(5)
+    private int rating;
+
+    public Cheese(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Cheese() {
+
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public String getName() {
         return name;
     }
 
-    public void setName(String aName){
-        name = aName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String aDescription) {
-        description = aDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Double getPrice() {
-        return price;
+    public CheeseType getType() {
+        return type;
     }
 
-    public void setPrice(Double price){
-        this.price = price;
+    public void setType(CheeseType type) {
+        this.type = type;
     }
 
-    public Double calculatedHalfPrice(){
-        return price / 2;
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
