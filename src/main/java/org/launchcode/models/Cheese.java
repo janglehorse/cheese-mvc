@@ -1,5 +1,8 @@
 package org.launchcode.models;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -8,7 +11,12 @@ import javax.validation.constraints.Size;
 /**
  * Created by LaunchCode
  */
+@Entity
 public class Cheese {
+
+    @Id
+    @GeneratedValue
+    private int Id;
 
     @NotNull
     @Size(min=3, max=15)
@@ -25,28 +33,17 @@ public class Cheese {
     @Max(5)
     private int rating;
 
-    private int cheeseId;
-    private static int nextId = 1;
-
     public Cheese(String name, String description) {
-        this();
         this.name = name;
         this.description = description;
     }
 
     public Cheese() {
-        rating = 3;
-        cheeseId = nextId;
-        nextId++;
 
     }
 
-    public int getCheeseId() {
-        return cheeseId;
-    }
-
-    public void setCheeseId(int cheeseId) {
-        this.cheeseId = cheeseId;
+    public int getId() {
+        return Id;
     }
 
     public String getName() {
